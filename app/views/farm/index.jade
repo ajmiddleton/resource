@@ -1,0 +1,11 @@
+#farm
+  table
+   - for(var i=0; i<3; i++)
+     tr
+       - for(var j=0; j<3; j++)
+         td(data-plot='#{(i*3)+j}', class= farm.plots[(i*3)+j].isUnlocked ? 'unlocked' : 'locked')
+           .farm-plot
+           .plot-controls
+             if farm.plots[(i*3)+j].isAvailable
+               button.button.button-small.button-action.plant Plant Seed
+             button.button.button-small.button-action.harvest Harvest

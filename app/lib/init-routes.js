@@ -21,6 +21,7 @@ function load(app, fn){
   app.get('/', dbg, game.index);
 
   app.post('/login', dbg, users.login);
+  app.put('/users/:userId/plant', dbg, users.plant);
 
 
   console.log('Routes Loaded');

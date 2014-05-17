@@ -8,7 +8,15 @@ block content
       input#username(type='text', autofocus=true, placeholder='Username')
       button#login Login
 
-  #dashboard
+  .row
+    .col-md-2
+      #dashboard-container.container
+      #inventory-container.container
+    .col-md-8
+      .well
+        #economy-container.container
+    .col-md-2
+      #store-container.container
 
 block scripts
   script(src='/js/es6/compiled/game.js')

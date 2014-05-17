@@ -1,8 +1,9 @@
-h2#user(data-id=user._id.toString())= user.username
-#stats
-  #timer Timer??
-  #food.stat Food: #{user.food}
-  #consumption.stat Consumption: #{user.consumption}
-  #wood.stat Wood: #{user.wood.toFixed(1)}
-  #ore.stat Ore: #{user.ore}
-  #cash.stat Cash: $#{user.cash}
+#dashboard
+  h2#user(data-id=user._id.toString())= user.username
+  #stats
+    #timer Timer??
+    #food.stat Food: #{user.food}
+    #consumption.stat Consumption: #{user.consumption}
+    #wood.stat Wood: #{user.wood.toFixed(1)}
+    #ore.stat Ore: #{user.ore}
+    #cash.stat Cash: $#{user.cash}

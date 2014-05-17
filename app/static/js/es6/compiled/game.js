@@ -18,12 +18,22 @@ function ajax(url, type) {
   $(document).ready(init);
   function init() {
     $('#login').click(login);
+    $('#economy-container').on('click', '.plant', plantCrop);
+  }
+  function plantCrop() {
+    var userId = $('#user').attr('data-id');
+    var plotNum = $(this).closest('td').attr('data-plot');
+    ajax(("/users/" + userId + "/plant"), 'put', {plotNum: plotNum}, (function(res) {
+      console.log(res.user);
+      $('#economy-container').empty().append(res.farmHTML);
+    }), 'json');
   }
   function login() {
     var username = $('#username').val();
-    ajax('/login', 'post', {username: username}, (function(html) {
-      $('#dashboard').empty().append(html);
-    }));
+    ajax('/login', 'post', {username: username}, (function(res) {
+      $('#dashboard-container').empty().append(res.dashboardHTML);
+      $('#economy-container').empty().append(res.farmHTML);
+    }), 'json');
   }
 })();
 

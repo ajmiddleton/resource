@@ -60,7 +60,7 @@ header h1 {
   background-color: #442700;
   color: #499955;
   border: 5px #499955 dashed;
-  float: right;
+  float: left;
   margin-right: 10px;
   margin-top: 10px;
   border-radius: 10px;
@@ -82,4 +82,40 @@ header h1 {
   width: 175px;
   margin: auto;
   margin-top: 10px;
+}
+
+.container{
+  display:inline-block;
+}
+
+#farm{
+  width:100%;
+  background-image:url('/img/farm-background.png');
+  background-size:cover;
+}
+
+#farm > table{
+  border-spacing:10px;
+  border-collapse: separate;
+
+  .locked{
+    button{
+      visibility:hidden;
+    }
+  }
+}
+
+.farm-plot{
+  background-image:url('/img/farm-plot.png');
+  background-size:cover;
+  width:230px;
+  height:150px;
+}
+
+.locked{
+  opacity: 0.5;
+}
+
+.hidden{
+  visibility:hidden;
 }
