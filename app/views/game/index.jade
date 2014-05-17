@@ -1,0 +1,14 @@
+extends ../shared/template
+
+block content
+
+  header
+    h1 Game!
+    #controls
+      input#username(type='text', autofocus=true, placeholder='Username')
+      button#login Login
+
+  #dashboard
+
+block scripts
+  script(src='/js/es6/compiled/game.js')
