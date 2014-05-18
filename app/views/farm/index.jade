@@ -12,5 +12,9 @@
                button.button.button-small.button-primary.buyPlot $#{farm.plots[(i*3)+j].cost}
              if farm.plots[(i*3)+j].isAvailable
                button.button.button-small.button-action.plant(class= farm.plots[(i*3)+j].isUnlocked ? 'unlocked' : 'locked') Plant Seed
+               select(class= farm.plots[(i*3)+j].isUnlocked ? 'unlocked' : 'locked')
+                 option -Seed-
+                 option corn
+                 option cotton
              if farm.plots[(i*3)+j].crop.isMature
                button.button.button-small.button-action.harvest(class= farm.plots[(i*3)+j].isUnlocked ? 'unlocked' : 'locked') Harvest

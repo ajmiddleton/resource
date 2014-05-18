@@ -12,10 +12,36 @@ function ajax(url, type, data={}, success=r=>console.log(r), dataType='html'){
 
 var gameTimer = setInterval(game, 1000);
 var gameFunctions = [];
+var consumptionRate = 0;
+var foodSupply = 0;
+initConsume();
+
+function initConsume(){
+  'use strict';
+  var consumeFn = {};
+  consumeFn.data = {};
+  consumeFn.data.functionIndex = gameFunctions.length;
+  consumeFn.run = consume;
+  gameFunctions.push(consumeFn);
+}
 
 function game(){
   'use strict';
   gameFunctions.forEach(fnObj=>{ fnObj.run(fnObj.data); });
+}
+
+function consume(data){
+  'use strict';
+  foodSupply -= consumptionRate;
+  if(foodSupply < 0){
+    gameFunctions.splice(data.functionIndex, 1);
+    alert('You Have Died of Starvation!');
+  }else if($('#user').length > 0){
+    var userId = $('#user').attr('data-id');
+    ajax(`/users/${userId}/updateFood`, 'put', {food:foodSupply}, res=>{
+      $('#dashboard-container').empty().append(res.dashboardHTML);
+    }, 'json');
+  }
 }
 
 (function(){
@@ -55,13 +81,15 @@ function game(){
     ajax(`users/${userId}/harvest`, 'put', {plotNum:plotNum}, res=>{
       $('#dashboard-container').empty().append(res.dashboardHTML);
       $('#economy-container').empty().append(res.farmHTML);
+      foodSupply = res.user.food;
     }, 'json');
   }
 
   function plantCrop(){
     var userId = $('#user').attr('data-id');
     var plotNum = $(this).closest('td').attr('data-plot');
-    ajax(`/users/${userId}/plant`, 'put', {plotNum:plotNum}, res=>{
+    var seedType = $(this).next().val();
+    ajax(`/users/${userId}/plant`, 'put', {plotNum:plotNum, seedType:seedType}, res=>{
       console.log(res.crop);
       var fnObj = {};
       fnObj.data = {};
@@ -72,6 +100,7 @@ function game(){
       fnObj.run = autogrow;
       gameFunctions.push(fnObj);
       $('#economy-container').empty().append(res.farmHTML);
+      $('#inventory-container').empty().append(res.inventoryHTML);
     }, 'json');
   }
 
@@ -82,6 +111,8 @@ function game(){
       $('#economy-container').empty().append(res.farmHTML);
       $('#inventory-container').empty().append(res.inventoryHTML);
       $('#store-container').empty().append(res.storeHTML);
+      foodSupply = res.user.food;
+      consumptionRate = res.user.consumption;
     }, 'json');
   }
 
@@ -89,7 +120,7 @@ function game(){
     if(crop.height < crop.maturityHeight){
       crop.height += crop.growthRate;
     }else{
-      gameFunctions.splice(this.functionIndex, 1);
+      gameFunctions.splice(crop.functionIndex, 1);
       ajax(`/users/${crop.userId}/updateCrop`, 'put', {crop:crop}, res=>{
         $('#economy-container').empty().append(res);
       });

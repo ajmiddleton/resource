@@ -12,7 +12,8 @@ exports.login = (req, res)=>{
     Farm.findById(user.farm, farm=>{
       res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>{
         res.render('farm/index', {farm:farm}, (e, farmHTML)=>{
-          res.render('users/inventory', {}, (e, inventoryHTML)=>{
+          var seedKeys = Object.keys(user.inventory.seeds);
+          res.render('users/inventory', {seedCounts:user.inventory.seeds, seedKeys:seedKeys}, (e, inventoryHTML)=>{
             res.render('users/store', {}, (e, storeHTML)=>{
               res.send({user:user, dashboardHTML:dashboardHTML, farmHTML:farmHTML, inventoryHTML:inventoryHTML, storeHTML:storeHTML});
             });
@@ -26,10 +27,20 @@ exports.login = (req, res)=>{
 exports.plant = (req, res)=>{
   User.findById(req.params.userId, user=>{
     Farm.findById(user.farm, farm=>{
-      var crop = new Crop('corn');
-      farm.plots[req.body.plotNum].crop = crop;
-      farm.plots[req.body.plotNum].isAvailable = false;
-      farm.save(()=>res.render('farm/index', {farm:farm}, (e, farmHTML)=>res.send({user:user, crop:crop, farmHTML:farmHTML})));
+      if(user.hasSeed(req.body.seedType)){
+        user.removeSeed(req.body.seedType);
+        var crop = new Crop(req.body.seedType);
+        farm.plots[req.body.plotNum].crop = crop;
+        farm.plots[req.body.plotNum].isAvailable = false;
+      }
+      user.save(()=>{
+        farm.save(()=>res.render('farm/index', {farm:farm}, (e, farmHTML)=>{
+          var seedKeys = Object.keys(user.inventory.seeds);
+          res.render('users/inventory', {seedCounts:user.inventory.seeds, seedKeys:seedKeys}, (e, inventoryHTML)=>{
+            res.send({user:user, crop:crop, farmHTML:farmHTML, inventoryHTML:inventoryHTML});
+          });
+        }));
+      });
     });
   });
 };
@@ -54,7 +65,7 @@ exports.harvest = (req, res)=>{
       farm.plots[req.body.plotNum].isAvailable = true;
       farm.save(()=>user.save(()=>{
         res.render('farm/index', {farm:farm}, (e, farmHTML)=>{
-          res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>res.send({dashboardHTML:dashboardHTML, farmHTML:farmHTML}));
+          res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>res.send({user:user, dashboardHTML:dashboardHTML, farmHTML:farmHTML}));
         });
       }));
     });
@@ -81,12 +92,22 @@ exports.buyPlot = (req, res)=>{
 exports.buySeed = (req, res)=>{
   console.log('------BUYSEED-------');
   User.findById(req.params.userId, user=>{
-    var crop = _.create(Crop.prototype, req.body.seed);
+    console.log(req.body.seed);
+    var crop = new Crop(req.body.seed);
+    console.log(crop);
     user.buySeed(crop);
     user.save(()=>{
       res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>{
-        res.render('users/inventory', {user:user}, (e, inventoryHTML)=>res.send({dashboardHTML:dashboardHTML, inventoryHTML:inventoryHTML}));
+        var seedKeys = Object.keys(user.inventory.seeds);
+        res.render('users/inventory', {seedCounts:user.inventory.seeds, seedKeys:seedKeys}, (e, inventoryHTML)=>res.send({dashboardHTML:dashboardHTML, inventoryHTML:inventoryHTML}));
       });
     });
+  });
+};
+
+exports.updateFood = (req, res)=>{
+  User.findById(req.params.userId, user=>{
+    user.food = req.body.food * 1;
+    user.save(()=>res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>res.send({user:user, dashboardHTML:dashboardHTML})));
   });
 };

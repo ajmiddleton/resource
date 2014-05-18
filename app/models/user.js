@@ -11,19 +11,49 @@ class User {
     this.username = username;
     this.wood = 0;
     this.ore = 0;
-    this.food = 10;
+    this.food = 50;
     this.cash = 1;
     this.consumption = 1;
-    this.inventory = [];
+    this.inventory = {};
+    this.inventory.seeds = {};
+    this.inventory.seeds.corn = 0;
+    this.inventory.seeds.cotton = 0;
+  }
+
+  hasSeed(seedType){
+    switch(seedType){
+    case 'corn':
+      return this.inventory.seeds.corn > 0;
+    case 'cotton':
+      return this.inventory.seeds.cotton > 0;
+    }
+  }
+
+  removeSeed(seedType){
+    console.log(this.inventory.seeds);
+    switch(seedType){
+    case 'corn':
+      this.inventory.seeds.corn -= 1;
+      break;
+    case 'cotton':
+      this.inventory.seeds.cotton -= 1;
+      break;
+    }
+    console.log(this.inventory.seeds);
   }
 
   buySeed(crop){
     if(this.cash >= crop.cost){
+      console.log('---INSIDE BUY SEED-----');
       this.cash -= crop.cost;
-      var item = {};
-      item.itemType = 'seed';
-      item.seedType = crop.type;
-      this.inventory.push(item);
+      switch(crop.type){
+      case 'corn':
+        this.inventory.seeds.corn++;
+        break;
+      case 'cotton':
+        this.inventory.seeds.cotton++;
+        break;
+      }
     }
   }
 

@@ -6,14 +6,14 @@ class Crop{
     case 'corn':
       this.type = type;
       this.cashValue = 1;
-      this.foodValue = 5;
+      this.foodValue = 50;
       this.growthRate = 1;
       this.maturityHeight = 10;
       this.cost = 1;
       break;
     case 'cotton':
       this.type = type;
-      this.cashValue = 10;
+      this.cashValue = 15;
       this.foodValue = 0;
       this.growthRate = 1;
       this.maturityHeight = 10;
