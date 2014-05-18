@@ -1,9 +1,8 @@
-#dashboard
+#dashboard.menu
   h2#user(data-id=user._id.toString())= user.username
-  #stats
-    #timer Timer??
+  .menu-item
     #food.stat Food: #{user.food}
-    #consumption.stat Consumption: #{user.consumption}
+    #consumption.stat Upkeep: #{user.consumption}
     #wood.stat Wood: #{user.wood.toFixed(1)}
     #ore.stat Ore: #{user.ore}
     #cash.stat Cash: $#{user.cash}

@@ -22,6 +22,10 @@ function load(app, fn){
 
   app.post('/login', dbg, users.login);
   app.put('/users/:userId/plant', dbg, users.plant);
+  app.put('/users/:userId/updateCrop', dbg, users.updateCrop);
+  app.put('/users/:userId/harvest', dbg, users.harvest);
+  app.put('/users/:userId/buyPlot', dbg, users.buyPlot);
+  app.put('/users/:userId/buySeed', dbg, users.buySeed);
 
 
   console.log('Routes Loaded');

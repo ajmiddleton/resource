@@ -1,6 +1,4 @@
 body {
-  background-image: url('/img/bg.jpg');
-  background-size: cover;
   background-attachment: fixed;
   font-family: 'Arhitects Daughter', cursive;
   font-size: 20px;
@@ -55,8 +53,8 @@ header h1 {
 ***********************
 */
 
-#dashboard {
-  width: 26%;
+.menu {
+  width:25%;
   background-color: #442700;
   color: #499955;
   border: 5px #499955 dashed;
@@ -73,7 +71,7 @@ header h1 {
   margin-bottom: -11px;
 }
 
-#stats {
+.menu-item {
   text-align: center;
   border-bottom: 1px #499955 solid;
 }
@@ -97,12 +95,6 @@ header h1 {
 #farm > table{
   border-spacing:10px;
   border-collapse: separate;
-
-  .locked{
-    button{
-      visibility:hidden;
-    }
-  }
 }
 
 .farm-plot{
@@ -112,8 +104,16 @@ header h1 {
   height:150px;
 }
 
+.plot-controls{
+  height:28px;
+}
+
 .locked{
   opacity: 0.5;
+}
+
+button.locked{
+  visibility:hidden;
 }
 
 .hidden{
@@ -129,4 +129,26 @@ header h1 {
   background-size:cover;
   width:50px;
   height:50px;
+}
+
+.corn{
+  position:absolute;
+  z-index:2;
+  bottom:90px;
+  left:90px;
+  background-image:url('/img/corn.png');
+  background-size:cover;
+  width:60px;
+  height:80px;
+}
+
+.cotton{
+  position:absolute;
+  z-index:2;
+  bottom:90px;
+  left:90px;
+  background-image:url('/img/cotton.png');
+  background-size:cover;
+  width:60px;
+  height:80px;
 }

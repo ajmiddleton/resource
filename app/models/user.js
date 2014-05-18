@@ -12,8 +12,19 @@ class User {
     this.wood = 0;
     this.ore = 0;
     this.food = 10;
-    this.cash = 0;
+    this.cash = 1;
     this.consumption = 1;
+    this.inventory = [];
+  }
+
+  buySeed(crop){
+    if(this.cash >= crop.cost){
+      this.cash -= crop.cost;
+      var item = {};
+      item.itemType = 'seed';
+      item.seedType = crop.type;
+      this.inventory.push(item);
+    }
   }
 
   save(fn){
