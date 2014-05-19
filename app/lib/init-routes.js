@@ -27,6 +27,7 @@ function load(app, fn){
   app.put('/users/:userId/buyPlot', dbg, users.buyPlot);
   app.put('/users/:userId/buySeed', dbg, users.buySeed);
   app.put('/users/:userId/updateFood', dbg, users.updateFood);
+  app.put('/users/:userId/buyUpgrade', dbg, users.buyUpgrade);
 
 
   console.log('Routes Loaded');

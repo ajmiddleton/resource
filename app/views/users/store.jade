@@ -1,0 +1,17 @@
+#store.menu
+  h2 Store
+  .menu-item
+    h3 Seeds
+      ul
+        li
+          span(data-seed='corn') Corn: $1
+          button.button.button-small.button-primary.buySeed Buy
+        li
+          span(data-seed='cotton') Cotton: $1
+          button.button.button-small.button-primary.buySeed Buy
+    h3 Upgrades
+      ul
+        if user.cash >= 100 && !user.autoharvest
+          li
+            span(data-upgrade='autoharvest') Harvest Worker $100/1 Upkeep
+            button.button.button-small.button-primary.buyUpgrade Buy

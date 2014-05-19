@@ -1,4 +1,5 @@
 /* jshint unused:false */
+/* global _ */
 function ajax(url, type, data={}, success=r=>console.log(r), dataType='html'){
   'use strict';
   $.ajax({
@@ -12,6 +13,7 @@ function ajax(url, type, data={}, success=r=>console.log(r), dataType='html'){
 
 var gameTimer = setInterval(game, 1000);
 var gameFunctions = [];
+var fnNumber = 0;
 var consumptionRate = 0;
 var foodSupply = 0;
 initConsume();
@@ -21,6 +23,8 @@ function initConsume(){
   var consumeFn = {};
   consumeFn.data = {};
   consumeFn.data.functionIndex = gameFunctions.length;
+  consumeFn.data.fNumber = fnNumber;
+  fnNumber++;
   consumeFn.run = consume;
   gameFunctions.push(consumeFn);
 }
@@ -34,7 +38,7 @@ function consume(data){
   'use strict';
   foodSupply -= consumptionRate;
   if(foodSupply < 0){
-    gameFunctions.splice(data.functionIndex, 1);
+    gameFunctions = _.reject(gameFunctions, fnObj=>fnObj.data.fNumber === data.fNumber);
     alert('You Have Died of Starvation!');
   }else if($('#user').length > 0){
     var userId = $('#user').attr('data-id');
@@ -55,6 +59,17 @@ function consume(data){
     $('#economy-container').on('click', '.harvest', harvestCrop);
     $('#economy-container').on('click', '.buyPlot', buyPlot);
     $('#store-container').on('click', '.buySeed', buySeed);
+    $('#store-container').on('click', '.buyUpgrade', buyUpgrade);
+  }
+
+  function buyUpgrade(){
+    var userId = $('#user').attr('data-id');
+    var upgrade = $(this).prev().attr('data-upgrade');
+    ajax(`users/${userId}/buyUpgrade`, 'put', {upgrade:upgrade}, res=>{
+      $('#dashboard-container').empty().append(res.dashboardHTML);
+      $('#store-container').empty().append(res.storeHTML);
+      consumptionRate = res.user.consumption;
+    }, 'json');
   }
 
   function buySeed(){
@@ -81,6 +96,7 @@ function consume(data){
     ajax(`users/${userId}/harvest`, 'put', {plotNum:plotNum}, res=>{
       $('#dashboard-container').empty().append(res.dashboardHTML);
       $('#economy-container').empty().append(res.farmHTML);
+      $('#store-container').empty().append(res.storeHTML);
       foodSupply = res.user.food;
     }, 'json');
   }
@@ -94,7 +110,8 @@ function consume(data){
       var fnObj = {};
       fnObj.data = {};
       fnObj.data = res.crop;
-      fnObj.data.functionIndex = gameFunctions.length;
+      fnObj.data.fNumber = fnNumber;
+      fnNumber++;
       fnObj.data.plotNum = plotNum;
       fnObj.data.userId = userId;
       fnObj.run = autogrow;
@@ -120,10 +137,11 @@ function consume(data){
     if(crop.height < crop.maturityHeight){
       crop.height += crop.growthRate;
     }else{
-      gameFunctions.splice(crop.functionIndex, 1);
+      gameFunctions = _.reject(gameFunctions, fnObj=>fnObj.data.fNumber === crop.fNumber);
       ajax(`/users/${crop.userId}/updateCrop`, 'put', {crop:crop}, res=>{
-        $('#economy-container').empty().append(res);
-      });
+        $('#economy-container').empty().append(res.farmHTML);
+        $('#dashboard-container').empty().append(res.dashboardHTML);
+      }, 'json');
     }
   }
 })();

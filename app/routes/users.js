@@ -14,7 +14,7 @@ exports.login = (req, res)=>{
         res.render('farm/index', {farm:farm}, (e, farmHTML)=>{
           var seedKeys = Object.keys(user.inventory.seeds);
           res.render('users/inventory', {seedCounts:user.inventory.seeds, seedKeys:seedKeys}, (e, inventoryHTML)=>{
-            res.render('users/store', {}, (e, storeHTML)=>{
+            res.render('users/store', {user:user}, (e, storeHTML)=>{
               res.send({user:user, dashboardHTML:dashboardHTML, farmHTML:farmHTML, inventoryHTML:inventoryHTML, storeHTML:storeHTML});
             });
           });
@@ -49,8 +49,18 @@ exports.updateCrop = (req, res)=>{
   console.log('--------UPDATE CROP---------');
   User.findById(req.params.userId, user=>{
     Farm.findById(user.farm, farm=>{
-      farm.plots[req.body.crop.plotNum].crop = _.create(Crop.prototype, req.body.crop);
-      farm.save(()=>res.render('farm/index', {farm:farm}));
+      var crop =  _.create(Crop.prototype, req.body.crop);
+      farm.plots[req.body.crop.plotNum].crop = crop;
+      if(user.autoharvest && crop.isMature){
+        crop.harvest(user);
+        farm.plots[req.body.crop.plotNum].crop = {};
+        farm.plots[req.body.crop.plotNum].isAvailable = true;
+      }
+      farm.save(()=>user.save(()=>{
+        res.render('farm/index', {farm:farm}, (e, farmHTML)=>{
+          res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>res.send({user:user, dashboardHTML:dashboardHTML, farmHTML:farmHTML}));
+        });
+      }));
     });
   });
 };
@@ -65,7 +75,9 @@ exports.harvest = (req, res)=>{
       farm.plots[req.body.plotNum].isAvailable = true;
       farm.save(()=>user.save(()=>{
         res.render('farm/index', {farm:farm}, (e, farmHTML)=>{
-          res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>res.send({user:user, dashboardHTML:dashboardHTML, farmHTML:farmHTML}));
+          res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>{
+            res.render('users/store', {user:user}, (e, storeHTML)=>res.send({user:user, storeHTML:storeHTML, dashboardHTML:dashboardHTML, farmHTML:farmHTML}));
+          });
         });
       }));
     });
@@ -109,5 +121,14 @@ exports.updateFood = (req, res)=>{
   User.findById(req.params.userId, user=>{
     user.food = req.body.food * 1;
     user.save(()=>res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>res.send({user:user, dashboardHTML:dashboardHTML})));
+  });
+};
+
+exports.buyUpgrade = (req, res)=>{
+  User.findById(req.params.userId, user=>{
+    user.buyUpgrade(req.body.upgrade);
+    user.save(()=>res.render('users/dashboard', {user:user}, (e, dashboardHTML)=>{
+      res.render('users/store', {user:user}, (e, storeHTML)=>res.send({user:user, dashboardHTML:dashboardHTML, storeHTML:storeHTML}));
+    }));
   });
 };

@@ -18,6 +18,7 @@ class User {
     this.inventory.seeds = {};
     this.inventory.seeds.corn = 0;
     this.inventory.seeds.cotton = 0;
+    this.autoharvest = false;
   }
 
   hasSeed(seedType){
@@ -30,7 +31,6 @@ class User {
   }
 
   removeSeed(seedType){
-    console.log(this.inventory.seeds);
     switch(seedType){
     case 'corn':
       this.inventory.seeds.corn -= 1;
@@ -39,12 +39,10 @@ class User {
       this.inventory.seeds.cotton -= 1;
       break;
     }
-    console.log(this.inventory.seeds);
   }
 
   buySeed(crop){
     if(this.cash >= crop.cost){
-      console.log('---INSIDE BUY SEED-----');
       this.cash -= crop.cost;
       switch(crop.type){
       case 'corn':
@@ -54,6 +52,18 @@ class User {
         this.inventory.seeds.cotton++;
         break;
       }
+    }
+  }
+
+  buyUpgrade(upgrade){
+    switch(upgrade){
+    case 'autoharvest':
+      if(this.cash >= 100){
+        this.cash -= 100;
+        this.autoharvest = true;
+        this.consumption++;
+      }
+      break;
     }
   }
 

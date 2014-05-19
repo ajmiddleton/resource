@@ -1,0 +1,11 @@
+#inventory.menu
+  h2 Inventory
+  .menu-item
+    h3 Seeds
+      ul
+        each key in seedKeys
+          case key
+            when 'corn'
+              li Corn: #{seedCounts.corn}
+            when 'cotton'
+              li Cotton: #{seedCounts.cotton}
